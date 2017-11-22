@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>learn koa</title>
+    <link rel="stylesheet" href="./../static/css/bootstrap.css">
+  </head>
+
+  <body>
+    {% block header %}
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand hidden-sm" href="http://www.bootcss.com" onclick="_hmt.push(['_trackEvent', 'navbar', 'click', 'navbar-首页'])">Bootstrap中文网</a>
+        </div>
+        <div class="navbar-collapse collapse" role="navigation">
+          <ul class="nav navbar-nav">
+            <li class="hidden-sm hidden-md">
+              <a href="http://v2.bootcss.com/" target="_blank" onclick="_hmt.push(['_trackEvent', 'navbar', 'click', 'v2doc'])">Bootstrap2中文文档</a>
+            </li>
+            <li>
+              <a href="http://v3.bootcss.com/" target="_blank" onclick="_hmt.push(['_trackEvent', 'navbar', 'click', 'v3doc'])">Bootstrap3中文文档</a>
+            </li>
+            <li>
+              <a href="http://v4.bootcss.com/" target="_blank" onclick="_hmt.push(['_trackEvent', 'navbar', 'click', 'v4doc'])">Bootstrap 4.0 预览</a>
+            </li>
+            <li>
+              <a href="/p/lesscss/" target="_blank" onclick="_hmt.push(['_trackEvent', 'navbar', 'click', 'less'])">Less 教程</a>
+            </li>
+            <li>
+              <a href="http://www.jquery123.com/" target="_blank" onclick="_hmt.push(['_trackEvent', 'navbar', 'click', 'jquery'])">jQuery API</a>
+            </li>
+            <li>
+              <a href="http://expo.bootcss.com" target="_blank" onclick="_hmt.push(['_trackEvent', 'navbar', 'click', 'expo'])">网站实例</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right hidden-sm">
+            <li>
+              <a href="/about/" onclick="_hmt.push(['_trackEvent', 'navbar', 'click', 'about'])">关于</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="jumbotron masthead">
+      <div class="container">
+        <h1>Bootstrap</h1>
+        <h2>简洁、直观、强悍的前端开发框架，让web开发更迅速、简单。</h2>
+        <p class="masthead-button-links">
+          <a class="btn btn-lg btn-primary btn-shadow" href="http://v3.bootcss.com/" target="_blank" role="button" onclick="_hmt.push(['_trackEvent', 'masthead', 'click', 'masthead-Bootstrap3中文文档'])">Bootstrap3中文文档(v3.3.7)</a>
+        </p>
+        <ul class="masthead-links">
+          <li>
+            <a href="http://v2.bootcss.com/" target="_blank" role="button" onclick="_hmt.push(['_trackEvent', 'masthead', 'click', 'masthead-Bootstrap2中文文档'])">Bootstrap2中文文档(v2.3.2)</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    {% endblock %} {% block body%}
+    <div class="container projects">
+      <div class="projects-header page-header">
+        <h2>body</h2>
+      </div>
+    </div>
+    {% endblock %} {% block footer %}
+    <footer class="footer ">
+      <div class="container">
+        <div class="row footer-top">
+          <div class="col-sm-6 col-lg-6">
+            <h4>
+              <img src="https://static.bootcss.com/www/assets/img/logo.png?1507601668481">
+            </h4>
+            <p>本网站所列开源项目的中文版文档全部由
+              <a href="http://www.bootcss.com/">Bootstrap中文网</a>成员翻译整理，并全部遵循
+              <a href="http://creativecommons.org/licenses/by/3.0/" target="_blank">CC BY 3.0</a>协议发布。</p>
+          </div>
+          <div class="col-sm-6  col-lg-5 col-lg-offset-1">
+            <div class="row about">
+              <div class="col-xs-3">
+                <h4>关于</h4>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="/about/">关于我们</a>
+                  </li>
+                  <li>
+                    <a href="/ad/">广告合作</a>
+                  </li>
+                  <li>
+                    <a href="/links/">友情链接</a>
+                  </li>
+                  <li>
+                    <a href="/hr/">招聘</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-xs-3">
+                <h4>联系方式</h4>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="http://weibo.com/bootcss" title="Bootstrap中文网官方微博" target="_blank">新浪微博</a>
+                  </li>
+                  <li>
+                    <a href="mailto:admin@bootcss.com">电子邮件</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-xs-3">
+                <h4>旗下网站</h4>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="http://www.golaravel.com/" target="_blank">Laravel中文网</a>
+                  </li>
+                  <li>
+                    <a href="http://www.ghostchina.com/" target="_blank">Ghost中国</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="col-xs-3">
+                <h4>赞助商</h4>
+                <ul class="list-unstyled">
+                  <li>
+                    <a href="https://www.upyun.com" target="_blank">又拍云</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <hr/>
+        <div class="row footer-bottom">
+          <ul class="list-inline text-center">
+            <li>
+              <a href="http://www.miibeian.gov.cn/" target="_blank">京ICP备11008151号</a>
+            </li>
+            <li>京公网安备11010802014853</li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+    {% endblock %}
+
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  </body>
+
+</html>
