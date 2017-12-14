@@ -1,23 +1,25 @@
 const dbStr = "mongodb://localhost:27017/moji"; // 数据库地址
 const mongoClient = require("mongodb").MongoClient;
 // 提取数据接口
-async function photo(ctx, next) {
-  /* mongoClient.connect(dbStr, (err, db) => {
+function photo(ctx, next) {
+  mongoClient.connect(dbStr, async (err, db) => {
     if (err) {
       console.error(err);
-      return reject(err);
+      return;
     }
-    let collection = db.collection("list"); // 连接到表list
-    collection.find().toArray((err, res) => {
+    let collection = await db.collection("list"); // 连接到表list
+    collection.find({}).skip(0).limit(10).toArray((err, res) => {
       if (err) {
         console.error("get错误：", err);
-        return reject(err);
+        return;
       }
       console.log("get成功");
       db.close();
-      return resolve(res);
+      ctx.response.body = res;
+      ctx.response.type = "application/json";
+      await next();
     })
-  }); */
+  });
 }
 
 module.exports = {
