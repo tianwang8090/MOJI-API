@@ -23,7 +23,7 @@ function connectMongo(url, callback) {
 // 断开mongodb
 function disconnectMongo(db) {
   if (db) {
-    db.close();
+    db.close(true);
     console.log("断开mongodb成功！");
   }
 }
@@ -41,8 +41,8 @@ function getPhotoByOldest() {
       let pages = await calculatePageCount(db, "list", 30);
       // 递归循环请求
       (function get(index) {
-        let url = `${urls.photo}?page=${pages+1}&per_page=30&order_by=oldest&client_id=${client_id}`;
-        console.log(`第${index + 1}次请求...`);
+        let url = `${urls.photo}?page=${pages+index+1}&per_page=30&order_by=oldest&client_id=${client_id}`;
+        console.log(`第${index + 1}次请求，page: ${pages+index+1}...`);
         https.get(url, res => {
           console.log(`第${index + 1}次请求返回...`);
           if (res.statusCode === 200) {
@@ -52,6 +52,9 @@ function getPhotoByOldest() {
             });
             res.on("end", async () => {
               let parsedData = JSON.parse(rawData);
+              parsedData.forEach((_element, _index) => {
+                _element.index = (pages + index) * 30 + _index;
+              });
               await savePhotos(db, "list" ,parsedData);
               // 请求ok、继续下一次请求
               get(index + 1);
@@ -67,22 +70,28 @@ function getPhotoByOldest() {
               get(index);
             }, 5000);
           }
-        }).on("error", e => console.error(`第${index + 1}次请求错误：`,e));
+        }).on("error", e => {
+          console.error(`第${index + 1}次请求错误：`, e);
+          disconnectMongo(db);
+        });
       })(0)
     }
   })
 }
 
 // 保存数据到mongodb
-async function savePhotos(db, collection, data) {
-    let col = db.collection(collection); // 连接到表list
-    await col.insertMany(data, (err, res) => {
-      if (err) {
-        console.error("保存数据错误：", err);
-        return;
-      }
-      console.log("保存数据成功！");
-    })
+function savePhotos(db, collection, data) {
+    return new Promise((resolve, reject) => {
+      let col = db.collection(collection); // 连接到表list
+      col.insertMany(data, (err, res) => {
+        if (err) {
+          console.error("保存数据错误：", err);
+          reject();
+        }
+        console.log("保存数据成功！");
+        resolve();
+      })
+    });
 }
 
 module.exports = function () {
