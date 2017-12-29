@@ -2,7 +2,8 @@ const Koa = require("koa");
 // const bodyParser = require("koa-bodyparser");
 const controller = require("./controller"); // 导入controller中间件
 // const templating = require("./templating"); // 导入模板中间件
-const fetching = require("./data_fetching/getPhoto")
+const fetching = require("./data_fetching/getPhoto");
+const { port } = require("./config");
 
 const isProduction = process.env.NODE_ENV === "production"; // 判断是否是生产环境
 const app = new Koa();
@@ -31,8 +32,8 @@ if (! isProduction) {
 // 使用middleware
 app.use(controller("./api"));
 
-app.listen(3000);
-console.log("app started at port 3000...");
+app.listen(port);
+console.log(`app started at port ${port}...`);
 
 // 服务运行之后开始定时获取数据
 fetching();

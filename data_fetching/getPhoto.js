@@ -1,12 +1,7 @@
 const https = require("https");
 const mongoClient = require("mongodb").MongoClient;
 
-const dbStr = "mongodb://localhost:27017/moji"; // 数据库地址
-const client_id = "cfe37fef16e74af3351242987c5871adf3bc6121a8efbab341b5f41382176ea4"; // moji的client_id
-const urls = {
-  photo: "https://api.unsplash.com/photos",
-  random: "https://api.unsplash.com/photos/random"
-};
+const {dbStr, client_id, urls} = require("./../config"); // 数据库地址
 
 // 连接mongodb
 function connectMongo(url, callback) {
@@ -50,14 +45,19 @@ function getPhotoByOldest() {
             res.on("data", d => {
               rawData += d;
             });
-            res.on("end", async () => {
+            res.on("end", () => {
               let parsedData = JSON.parse(rawData);
               parsedData.forEach((_element, _index) => {
                 _element.index = (pages + index) * 30 + _index;
               });
-              await savePhotos(db, "list" ,parsedData);
-              // 请求ok、继续下一次请求
-              get(index + 1);
+              savePhotos(db, "list" ,parsedData).then(() => {
+                // 请求ok、继续下一次请求
+                get(index + 1);
+              }).catch(err => {
+                console.error(err);
+                // 保存数据失败后断开mongo
+                disconnectMongo(db);
+              });
             });
           } else if (res.statusCode === 403) {
             // 请求次数达到限制被屏蔽,不再请求
@@ -83,20 +83,25 @@ function getPhotoByOldest() {
 function savePhotos(db, collection, data) {
     return new Promise((resolve, reject) => {
       let col = db.collection(collection); // 连接到表list
-      col.insertMany(data, (err, res) => {
-        if (err) {
-          console.error("保存数据错误：", err);
-          reject();
-        }
-        console.log("保存数据成功！");
-        resolve();
-      })
+      if (data && data.length) {
+        col.insertMany(data, (err, res) => {
+          if (err) {
+            console.error("保存数据错误：", err);
+            reject(err);
+          }
+          console.log("保存数据成功！");
+          resolve();
+        })
+      } else {
+        reject("保存数据为空");
+      }
+      
     });
 }
 
 module.exports = function () {
-  // 每隔50min获取数据
+  // 每天获取一次数据
   console.log("starting fetching...");
   getPhotoByOldest();
-  setInterval(getPhotoByOldest, 50*60*1000);
+  setInterval(getPhotoByOldest, 24*60*60*1000);
 }

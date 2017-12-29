@@ -1,27 +1,26 @@
-const dbStr = "mongodb://localhost:27017/moji"; // 数据库地址
+const {dbStr} = require("./../config"); // 数据库地址
 const mongoClient = require("mongodb").MongoClient;
 
-function queryPhoto() {
-  
+var resultHandle = function (ctx, res) {
+  let result = {
+    status: true,
+    message: "获取成功",
+    data: null
+  };
+  result.data = res;
+  ctx.response.type = "application/json";
+  ctx.response.body = result;
+  console.log("get成功");
 }
 
 // 提取数据接口
 var photo = (ctx, next) => {
   let {
     orderBy,
-    lastIndex,
     page
   } = ctx.request.query;
 
-  if (!lastIndex || !page) {
-    ctx.response.type = "application/json";
-    ctx.response.body = {
-      status: false,
-      message: "查询参数错误",
-      data: null
-    }
-    return resolve(next());
-  }
+  console.log("api-photo-query: ", ctx.request.query);
 
   let promise = null;
   switch (orderBy) {
@@ -41,21 +40,13 @@ var photo = (ctx, next) => {
             .skip(30 * (page - 1))
             .limit(30)
             .toArray((err, res) => {
-              let result = {
-                status: true,
-                message: "获取成功",
-                data: null
-              };
+              db.close(true);
               if (err) {
                 console.error("get错误：", err);
                 ctx.response.status = 500;
                 return resolve(next());
               }
-              result.data = res;
-              ctx.response.type = "application/json";
-              ctx.response.body = result;
-              console.log("get成功");
-              db.close(true);
+              resultHandle(ctx, res);
               resolve(next());
             })
         });
@@ -77,21 +68,13 @@ var photo = (ctx, next) => {
             .skip(30 * (page - 1))
             .limit(30)
             .toArray((err, res) => {
-              let result = {
-                status: true,
-                message: "获取成功",
-                data: null
-              };
+              db.close(true);
               if (err) {
                 console.error("get错误：", err);
                 ctx.response.status = 500;
                 return resolve(next());
               }
-              result.data = res;
-              ctx.response.type = "application/json";
-              ctx.response.body = result;
-              console.log("get成功");
-              db.close(true);
+              resultHandle(ctx, res);
               resolve(next());
             })
         });
@@ -99,53 +82,37 @@ var photo = (ctx, next) => {
       break;
     case "random":
       promise = new Promise((resolve, reject) => {
-        mongoClient.connect(dbStr, (err, db) => {
+        mongoClient.connect(dbStr, async (err, db) => {
           if (err) {
             console.error("连接mongo错误：", err);
             ctx.response.status = 500;
             return resolve(next());
           }
           let collection = db.collection("list"); // 连接到表list
-          let count = collection.find().count();
-          let random = Math.random();
-          let col = collection.find({
+          let count = await collection.find().count();
+          let findPromises = new Array(30).fill(null).map(item => ({
             index: {
-              $gte: count * random
+              $gte: count * Math.random()
             }
-          }).limit(30);
-          if (col.count() < 30) {
-            col = collection.find({
-              index: {
-                $lte: count * random
-              }
-            }).limit(30);
-          }
-          
-          col.toArray((err, res) => {
-            let result = {
-              status: true,
-              message: "获取成功",
-              data: null
-            };
-            if (err) {
-              console.error("get错误：", err);
-              ctx.response.status = 500;
-              return resolve(next());
-            }
-            result.data = res;
-            ctx.response.type = "application/json";
-            ctx.response.body = result;
-            console.log("get成功");
+          })).map(item => collection.findOne(item));
+          let findResults = await Promise.all(findPromises).catch(err => {
+            console.error("get错误：", err);
+            ctx.response.status = 500;
             db.close(true);
+            return resolve(next());
+          });
+          db.close(true);
+          if (findResults) {
+            resultHandle(ctx, findResults);
             resolve(next());
-          })
+          }
         });
       });
       break;
 
       // "latest"
     default:
-      next();  
+      next();
       break;
   }
   return promise;
